@@ -3,15 +3,6 @@
 
     <x-slot:styles>
         <style>
-            .stat-number {
-                opacity: 0;
-                transform: translateY(20px);
-                transition: all 0.6s ease-out;
-            }
-            .stat-number.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
             .card-hover {
                 transition: all 0.3s ease;
             }

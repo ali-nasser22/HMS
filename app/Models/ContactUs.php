@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContactUs extends Model
 {
-    //
+    protected $table = 'contact_us';
+
+    protected $fillable = [
+        'address',
+        'email',
+        'phone',
+        'map_location'
+    ];
 }
