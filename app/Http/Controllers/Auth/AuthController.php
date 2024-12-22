@@ -23,11 +23,15 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+            // Redirect based on role
             if (auth()->user()->hasRole('admin')) {
                 return redirect()->route('admin.dashboard');
+            } elseif (auth()->user()->hasRole('doctor')) {
+                return redirect()->route('doctor.dashboard');
+            } else {
+                // For patients or other roles
+                return redirect()->route('home');
             }
-
-            return redirect()->intended('/');
         }
 
         return back()->withErrors([
