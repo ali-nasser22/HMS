@@ -17,10 +17,11 @@ class AppointmentController extends Controller
         return view('doctor.appointments.index',compact('appointments'));
     }
     public function show(Appointment $appointment){
+        $patient = $appointment->patient();
         if($appointment->doctor_id !== auth()->id()){
             abort(403);
         }
-        return view('doctor.appointments.show',compact('appointment'));
+        return view('doctor.appointments.show',compact('appointment','patient'));
     }
 
     public function update(Request $request, Appointment $appointment)

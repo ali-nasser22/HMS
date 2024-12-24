@@ -31,6 +31,12 @@
                                 {{ $patient->patientProfile->blood_group }}
                             </dd>
                         </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Emergency Contact</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $patient->patientProfile->emergency_contact }}
+                            </dd>
+                        </div>
                         <div class="md:col-span-2">
                             <dt class="text-sm font-medium text-gray-500">Medical History</dt>
                             <dd class="mt-1 text-sm text-gray-900">

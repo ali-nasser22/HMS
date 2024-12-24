@@ -1,16 +1,24 @@
 <?php
 
-use App\Http\Controllers\Admin\AboutController;
-use App\Http\Controllers\Admin\ContactController;
-use App\Http\Controllers\Admin\ImageController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\{
+    AboutController,
+    ContactController,
+    DashboardController as AdminDashboardController,
+    ImageController,
+    UserController
+};
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Doctor\DashboardController as DoctorDashboardController;
-use App\Http\Controllers\Doctor\AppointmentController;
-use App\Http\Controllers\Doctor\PatientController;
-use App\Http\Controllers\Doctor\ScheduleController;
-use App\Http\Controllers\Doctor\ProfileController;
+use App\Http\Controllers\Doctor\{
+    AppointmentController as DoctorAppointmentController,
+    DashboardController as DoctorDashboardController,
+    PatientController,
+    ProfileController as DoctorProfileController
+};
+use App\Http\Controllers\Patient\{
+    AppointmentController as PatientAppointmentController,
+    DashboardController as PatientDashboardController,
+    ProfileController as PatientProfileController
+};
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -44,26 +52,41 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Image Gallery Management
     Route::resource('images', ImageController::class);
 });
+
 // Doctor routes
 Route::middleware(['auth', 'role:doctor'])->prefix('doctor')->name('doctor.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DoctorDashboardController::class, 'index'])->name('dashboard');
 
     // Appointments
-    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
-    Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-    Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
-    Route::put('/appointments/{appointment}', [AppointmentController::class, 'update'])->name('appointments.update');
-    Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
+    Route::get('/appointments', [DoctorAppointmentController::class, 'index'])->name('appointments');
+    Route::get('/appointments/{appointment}', [DoctorAppointmentController::class, 'show'])->name('appointments.show');
+    Route::put('/appointments/{appointment}', [DoctorAppointmentController::class, 'update'])->name('appointments.update');
 
     // Patients
     Route::get('/patients', [PatientController::class, 'index'])->name('patients');
     Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
 
     // Profile
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [DoctorProfileController::class, 'edit'])->name('profile');
+    Route::put('/profile', [DoctorProfileController::class, 'update'])->name('profile.update');
+});
+
+// Patient routes
+Route::middleware(['auth', 'role:patient'])->prefix('patient')->name('patient.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [PatientDashboardController::class, 'index'])->name('dashboard');
+
+    // Appointments
+    Route::get('/appointments', [PatientAppointmentController::class, 'index'])->name('appointments');
+    Route::get('/appointments/create', [PatientAppointmentController::class, 'create'])->name('appointments.create');
+    Route::post('/appointments', [PatientAppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments/{appointment}', [PatientAppointmentController::class, 'show'])->name('appointments.show');
+    Route::delete('/appointments/{appointment}', [PatientAppointmentController::class, 'cancel'])->name('appointments.cancel');
+
+    // Profile
+    Route::get('/profile', [PatientProfileController::class, 'edit'])->name('profile');
+    Route::put('/profile', [PatientProfileController::class, 'update'])->name('profile.update');
 });
 
 // Protected routes

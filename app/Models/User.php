@@ -2,79 +2,75 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'first_name',
         'last_name',
-        'gender',
         'email',
+        'gender',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    // For appointments when user is a doctor
+    public function doctorAppointments()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Appointment::class, 'doctor_id');
     }
-    public function roles(): BelongsToMany
+
+    // For appointments when user is a patient
+    public function appointments()
     {
-        return $this->belongsToMany(Role::class,'user_roles');
+        return $this->hasMany(Appointment::class, 'patient_id');
     }
-    public function doctorProfile(): HasOne
+
+    // Doctor profile relationship
+    public function doctorProfile()
     {
         return $this->hasOne(DoctorProfile::class);
     }
-    public function patientProfile(): HasOne{
+
+    // Patient profile relationship
+    public function patientProfile()
+    {
         return $this->hasOne(PatientProfile::class);
     }
-    public function hasRole($role){
-        return $this->roles()->where('name',$role)->exists();
+
+    // User roles relationship
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
     }
 
-    public function doctorAppointments():HasMany
+    public function hasRole($role)
     {
-        return $this->hasMany(Appointment::class,'doctor_id');
+        return $this->roles()->where('name', $role)->exists();
     }
 
-    public function appointments():HasMany
-    {
-        return $this->hasMany(Appointment::class,'patient_id');
-    }
-    public function getFullNameAttribute(): string
+    public function getFullNameAttribute()
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function doctor():HasOne
+    {
+        return $this->hasOne(DoctorProfile::class);
     }
 }
