@@ -71,7 +71,7 @@ class AppointmentController extends Controller
         if($appointment->status !== 'scheduled'){
             return back()->with('error','Cannot cancel an appointment that is not scheduled');
         }
-        $appointment->status = 'canclled';
+        $appointment->status = 'cancelled';
         $appointment->save();
         return redirect()->route('patient.appointments')->with('success','Appointment cancelled successfully');
     }

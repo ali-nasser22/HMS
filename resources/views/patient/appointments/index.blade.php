@@ -6,7 +6,7 @@
         <div class="p-6 border-b border-gray-100">
             <div class="flex justify-between items-center">
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800">Appointments List</h2>
+                    <h2 class="text-xl font-semibold text-gray-800">My Appointments</h2>
                     <p class="mt-1 text-sm text-gray-500">View and manage your appointments</p>
                 </div>
                 <a href="{{ route('patient.appointments.create') }}"
@@ -46,7 +46,7 @@
                                     Dr. {{ $appointment->doctor->full_name }}
                                 </div>
                                 <div class="text-sm text-gray-500">
-                                    {{ $appointment->doctor->doctorProfile->specialization }}
+                                    {{ $appointment->doctor->doctorProfile->specialization ?? 'General' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -71,14 +71,15 @@
                                     </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                @if($appointment->status === 'scheduled')
+                                @if($appointment->status === 'scheduled' && $appointment->appointment_date->gt(Carbon\Carbon::today()))
                                     <form action="{{ route('patient.appointments.cancel', $appointment) }}"
                                           method="POST"
                                           onsubmit="return confirm('Are you sure you want to cancel this appointment?');"
-                                          class="inline">
+                                          class="inline-block">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">
+                                        <button type="submit"
+                                                class="text-red-600 hover:text-red-900">
                                             Cancel
                                         </button>
                                     </form>

@@ -7,37 +7,48 @@
     <script src="https://cdn.tailwindcss.com"></script>
     {{ $styles ?? '' }}
 </head>
-<body>
+<body class="flex flex-col min-h-screen">
 <!-- Header/Navigation -->
 <header class="bg-[#023047] text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
-            <div class="flex-shrink-0">
+            <div class="flex items-center">
                 <a href="/" class="font-bold text-xl">HMS</a>
+                <nav class="ml-10">
+                    <div class="space-x-8">
+                        <a href="#about" class="text-white hover:text-[#FFB703] transition-colors">About Us</a>
+                        <a href="#contact" class="text-white hover:text-[#FFB703] transition-colors">Contact</a>
+                        <a href="#gallery" class="text-white hover:text-[#FFB703] transition-colors">Gallery</a>
+                    </div>
+                </nav>
             </div>
 
-            <nav class="flex space-x-4">
+            <div class="flex items-center space-x-4">
                 @auth
-                    <span class="text-gray-300">{{ auth()->user()->full_name }}</span>
+                    <span class="text-white">{{ auth()->user()->full_name }}</span>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="text-gray-300 hover:text-white">Logout</button>
+                        <button type="submit" class="text-white hover:text-[#FFB703] transition-colors">
+                            Logout
+                        </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="text-gray-300 hover:text-white">Login</a>
+                    <a href="{{ route('login') }}" class="text-white hover:text-[#FFB703] transition-colors">
+                        Login
+                    </a>
                 @endauth
-            </nav>
+            </div>
         </div>
     </div>
 </header>
 
 <!-- Main Content -->
-<main>
+<main class="flex-grow">
     {{ $slot }}
 </main>
 
 <!-- Footer -->
-<footer class="bg-[#023047] text-white mt-auto">
+<footer class="bg-[#023047] text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="text-center">
             <p>&copy; {{ date('Y') }} Hospital Management System. All rights reserved.</p>

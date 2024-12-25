@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\{
     UserController
 };
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Doctor\{
     AppointmentController as DoctorAppointmentController,
     DashboardController as DoctorDashboardController,
@@ -22,9 +23,7 @@ use App\Http\Controllers\Patient\{
 use Illuminate\Support\Facades\Route;
 
 // Public routes
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/',[WelcomeController::class,'index'])->name('home');
 
 // Guest routes
 Route::middleware('guest')->group(function () {

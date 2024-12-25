@@ -40,6 +40,16 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>
                                 </a>
+                            @elseif(auth()->user()->hasRole('doctor'))
+                                <a href="{{ route('doctor.dashboard') }}"
+                                   class="rounded-md bg-[#FFB703] hover:bg-[#FB8500] text-[#023047] px-8 py-4 font-semibold inline-flex items-center gap-2 transition-all">
+                                    Doctor Dashboard
+                                </a>
+                            @elseif(auth()->user()->hasRole('patient'))
+                                <a href="{{ route('patient.dashboard') }}"
+                                   class="rounded-md bg-[#FFB703] hover:bg-[#FB8500] text-[#023047] px-8 py-4 font-semibold inline-flex items-center gap-2 transition-all">
+                                    Patient Dashboard
+                                </a>
                             @endif
                         @else
                             <a href="{{ route('login') }}"
@@ -129,6 +139,82 @@
                     <p class="text-gray-600">Comprehensive reporting and analytics for informed decision making.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-3xl font-bold text-[#023047] sm:text-4xl">About Us</h2>
+                @if(isset($aboutUs))
+                    <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                        {{ $aboutUs->content }}
+                    </p>
+                    @if($aboutUs->image_path)
+                        <img src="{{ Storage::url($aboutUs->image_path) }}"
+                             alt="About Us"
+                             class="mt-6 mx-auto rounded-lg shadow-lg">
+                    @endif
+                @endif
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#023047] sm:text-4xl">Our Gallery</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach($images ?? [] as $image)
+                    <div class="relative group">
+                        <img src="{{ Storage::url($image->image_path) }}"
+                             alt="{{ $image->title }}"
+                             class="w-full h-64 object-cover rounded-lg shadow-md">
+                        <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                            <p class="text-white text-center px-4">{{ $image->title }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#023047] sm:text-4xl">Contact Us</h2>
+            </div>
+            @if(isset($contact))
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div>
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-medium text-[#023047]">Address</h3>
+                                <p class="mt-2 text-gray-600">{{ $contact->address }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-medium text-[#023047]">Email</h3>
+                                <p class="mt-2 text-gray-600">{{ $contact->email }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-medium text-[#023047]">Phone</h3>
+                                <p class="mt-2 text-gray-600">{{ $contact->phone }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        @if($contact->map_location)
+                            <div class="h-96 rounded-lg overflow-hidden">
+                                {!! $contact->map_location !!}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
     </section>
 

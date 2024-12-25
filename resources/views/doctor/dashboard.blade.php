@@ -5,7 +5,6 @@
     <div class="space-y-6">
         <!-- Stats Overview -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <!-- Today's Appointments -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex justify-between items-start">
                     <div>
@@ -16,7 +15,6 @@
                 </div>
             </div>
 
-            <!-- Total Patients -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex justify-between items-start">
                     <div>
@@ -27,28 +25,60 @@
                 </div>
             </div>
 
-            <!-- Upcoming Appointments -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-gray-500 text-sm">Upcoming</p>
                         <h3 class="text-2xl font-bold text-gray-800 mt-2">{{ $stats['upcoming_appointments'] }}</h3>
                     </div>
-                    <span class="bg-yellow-100 text-yellow-600 text-xs px-2 py-1 rounded-full">This Week</span>
+                    <span class="bg-yellow-100 text-yellow-600 text-xs px-2 py-1 rounded-full">Scheduled</span>
                 </div>
             </div>
 
-            <!-- Completed Appointments -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-gray-500 text-sm">Completed</p>
                         <h3 class="text-2xl font-bold text-gray-800 mt-2">{{ $stats['completed_appointments'] }}</h3>
                     </div>
-                    <span class="bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded-full">This Month</span>
+                    <span class="bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded-full">Total</span>
                 </div>
             </div>
         </div>
+
+        <!-- Today's Schedule -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-lg font-semibold text-gray-800">Today's Appointments</h2>
+            </div>
+            <div class="p-6">
+                <div class="divide-y">
+                    @forelse($todayAppointments as $appointment)
+                        <div class="py-4 flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="bg-[#219EBC] rounded-full w-2 h-2 mr-4"></div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800">{{ $appointment->patient->full_name }}</h4>
+                                    <p class="text-sm text-gray-500">{{ $appointment->reason }}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-semibold text-gray-800">{{ $appointment->appointment_time->format('h:i A') }}</p>
+                                <span class="text-xs px-2 py-1 rounded-full
+                                    {{ $appointment->status === 'completed' ? 'bg-green-100 text-green-800' :
+                                       ($appointment->status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                        'bg-yellow-100 text-yellow-800') }}">
+                                    {{ ucfirst($appointment->status) }}
+                                </span>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-gray-500 text-center py-4">No appointments scheduled for today</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
         <!-- Recent Patients -->
         <div class="bg-white rounded-lg shadow">
             <div class="p-6 border-b border-gray-100">
@@ -60,13 +90,10 @@
                         <thead>
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Patient
+                                Patient Name
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Last Visit
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
+                                Email
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions
@@ -78,38 +105,21 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">{{ $patient->full_name }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-500">{{ $patient->email }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($patient->appointments->first())
-                                        <div class="text-sm text-gray-900">
-                                            {{ $patient->appointments->first()->appointment_date->format('M d, Y') }}
-                                        </div>
-                                        <div class="text-sm text-gray-500">
-                                            {{ $patient->appointments->first()->appointment_time->format('h:i A') }}
-                                        </div>
-                                    @else
-                                        <div class="text-sm text-gray-500">No visits yet</div>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($patient->appointments->first())
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                {{ $patient->appointments->first()->status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                                {{ ucfirst($patient->appointments->first()->status) }}
-                                            </span>
-                                    @endif
-                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('doctor.patients.show', $patient) }}" class="text-[#219EBC] hover:text-[#219EBC]/80">
+                                    <a href="{{ route('doctor.patients.show', $patient->id) }}"
+                                       class="text-[#219EBC] hover:text-[#219EBC]/80">
                                         View Details
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">
-                                    No patients found
+                                <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                                    No recent patients
                                 </td>
                             </tr>
                         @endforelse

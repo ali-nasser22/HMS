@@ -13,29 +13,47 @@ class DashboardController extends Controller
     public function index()
     {
         $doctor = auth()->user();
-        $doctorProfile = $doctor->doctorProfile;
         $today = Carbon::today();
 
         // Get statistics
         $stats = [
-            'today_appointments' => 0,    // Will implement when Appointments table is ready
-            'total_patients' => 0,        // Will implement when Appointments table is ready
-            'upcoming_appointments' => 0,  // Will implement when Appointments table is ready
-            'completed_appointments' => 0  // Will implement when Appointments table is ready
+            'today_appointments' => $doctor->doctorAppointments()
+            ->where('appointment_date', $today)
+            ->count(),
+            'total_patients' => $doctor->doctorAppointments()
+            ->distinct('patient_id')
+            ->count('patient_id'),
+            'upcoming_appointments' => $doctor->doctorAppointments()
+            ->whereDate('appointment_date','>=', $today)
+            ->where('status','scheduled')
+            ->count(),
+            'completed_appointments' => $doctor->doctorAppointments()
+            ->where('status','completed')
+            ->count()
         ];
 
-        // Get today's appointments - placeholder empty collection until Appointments table is ready
-        $todayAppointments = collect([]);
+
+        $todayAppointments = $doctor->doctorAppointments()
+        ->with('patient')
+        ->whereDate('appointment_date',$today)
+        ->orderBy('appointment_date')
+        ->get();
 
         // Get recent patients - placeholder empty collection until Patient/Appointments relations are ready
-        $recentPatients = collect([]);
+        $recentPatients = $doctor->doctorAppointments()
+        ->with('patient')
+        ->select('patient_id')
+        ->distinct()
+        ->latest()
+        ->take(5)
+        ->get()
+        ->pluck('patient');
 
         return view('doctor.dashboard', compact(
             'stats',
             'todayAppointments',
             'recentPatients',
             'doctor',
-            'doctorProfile'
         ));
     }
 }

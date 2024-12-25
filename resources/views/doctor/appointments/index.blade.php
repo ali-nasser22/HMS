@@ -1,15 +1,10 @@
 <x-doctor.layout>
-    <x-slot:title>My Appointments</x-slot>
-    <x-slot:header>My Appointments</x-slot>
+    <x-slot:title>Appointments</x-slot>
+    <x-slot:header>Appointments</x-slot>
 
     <div class="bg-white rounded-lg shadow">
         <div class="p-6 border-b border-gray-100">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl font-semibold text-gray-800">Appointments List</h2>
-                    <p class="mt-1 text-sm text-gray-500">Manage your patient appointments</p>
-                </div>
-            </div>
+            <h2 class="text-xl font-semibold text-gray-800">Appointments List</h2>
         </div>
 
         <div class="p-6">
@@ -50,11 +45,24 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                         {{ $appointment->status === 'completed' ? 'bg-green-100 text-green-800' :
-                                           ($appointment->status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                           ($appointment->status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                            'bg-yellow-100 text-yellow-800') }}">
                                         {{ ucfirst($appointment->status) }}
                                     </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                @if($appointment->status === 'scheduled')
+                                    <form action="{{ route('doctor.appointments.update', $appointment) }}"
+                                          method="POST"
+                                          class="inline-block">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit"
+                                                class="text-green-600 hover:text-green-900 mr-4">
+                                            Complete
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('doctor.appointments.show', $appointment) }}"
                                    class="text-[#219EBC] hover:text-[#219EBC]/80">
                                     View Details

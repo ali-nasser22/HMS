@@ -29,11 +29,11 @@ class AppointmentController extends Controller
         if($appointment->doctor_id !== auth()->id()){
             abort(403);
         }
-        $validated = $request->validated([
-            'status'=>'required|in:scheduled,completed,cancelled',
-            'notes'=>'nullable|string'
-        ]);
-        $appointment->update($validated);
-        return redirect()->back()->with('Success','Appointment updated Successfully');
-    }
+        if($appointment->status === 'cancelled'){
+            return redirect()->back()->with('error','Cannot update cancelled appointment');
+        }
+        $appointment->status ='completed';
+        $appointment->save();
+        return back()->with('success','Appointment marked as completed');
+}
 }
