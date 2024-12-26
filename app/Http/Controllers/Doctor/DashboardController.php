@@ -18,7 +18,7 @@ class DashboardController extends Controller
         // Get statistics
         $stats = [
             'today_appointments' => $doctor->doctorAppointments()
-            ->where('appointment_date', $today)
+            ->whereDate('appointment_date', $today)->where('status','scheduled')
             ->count(),
             'total_patients' => $doctor->doctorAppointments()
             ->distinct('patient_id')
